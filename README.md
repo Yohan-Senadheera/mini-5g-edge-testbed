@@ -1,38 +1,99 @@
 # Mini 5G Edge Testbed (Cloud-Native Networking Lab)
 
-A **5G-inspired** cloud-native networking testbed focused on the **system architecture** side of 5G (network functions, edge deployment, automation, and observability) — **not** a radio/PHY implementation.
+A **5G-inspired, cloud-native edge networking testbed** focused on how modern 5G systems are **designed, deployed, automated, and monitored** — rather than radio/PHY implementation.
 
-## What “5G” means here (honest scope)
-This project models **5G-style principles**:
+This project demonstrates **containerized network-function style components**, **edge-style deployment**, **automation readiness**, and **real-time observability** using industry-standard tools.
+
+---
+
+## What “5G” means in this project (Scope & Honesty)
+
+This is **not a radio-level 5G implementation** (no gNB, spectrum, or PHY/MAC layers).
+
+Instead, the project focuses on **core 5G architectural principles**, including:
 - **Network Functions (NFs)** as independent, containerized components
-- **Edge deployment mindset** (run near-user on a Linux node / VM; Raspberry Pi can be added later)
-- **Automation-first** approach (CI/CD → Kubernetes/AWS roadmap)
-- **Observability** as a first-class feature (Prometheus + Grafana)
+- **Edge computing mindset (MEC-style)** — services deployed close to users
+- **Cloud-native design** (containers, orchestration, automation)
+- **Strong observability and monitoring**, which is critical in real 5G networks
 
-## High-level architecture
-Traffic / UE-like load
-→ **NF Gateway (simulated NF)**  
-→ **NF App (service behind the gateway)**  
-→ Metrics scraped by **Prometheus**  
-→ Visualized in **Grafana**
+This mirrors how real 5G cores (e.g., Open5GS, Free5GC) are built and operated.
 
-Edge Node (today): **WSL2 Ubuntu / Linux VM**  
-Future (roadmap): **Kubernetes (k3s/kind → EKS)** + **AWS (EC2/VPC/ECR)**
+---
 
-## Status
-**Ongoing.**
-Phase 1 focuses on a working edge stack + monitoring dashboard.
-Next phases extend to Kubernetes orchestration and AWS deployment.
+## High-Level Architecture (Phase 1)
 
-## Planned phases
-- **Phase 1 (now):** Docker Compose testbed + traffic + Prometheus/Grafana dashboard
-- **Phase 2:** Kubernetes migration (k3s/kind), basic CI pipeline
-- **Phase 3:** AWS exposure (EC2/VPC, optional ECR), deploy automation
-- **Phase 4 (optional):** Replace simulated NFs with Open5GS/Free5GC components + UERANSIM
+Traffic / UE-like load  
+→ **NF Gateway** (simulated network function)  
+→ **NF App** (service behind the gateway)
 
-## Quickstart (coming next)
-You will be able to run:
-```bash
-./scripts/up.sh
-./scripts/test.sh
-./scripts/down.sh
+**Edge Node**
+- Linux (WSL2 Ubuntu) acting as an edge environment
+- Containerized components using Docker
+
+**Observability**
+- Prometheus for metrics collection
+- Grafana for real-time dashboards
+- Node Exporter + cAdvisor for host & container metrics
+
+---
+
+## Current Implementation (Completed)
+
+✅ Containerized “network function” components  
+✅ Edge-style deployment on a Linux node  
+✅ Continuous traffic generation  
+✅ Real-time monitoring dashboard (CPU, memory, container behavior)  
+✅ Prometheus targets verified and Grafana dashboards visualized  
+
+---
+
+## Monitoring Dashboard
+
+The dashboard provides:
+- **Edge node health** (CPU, memory)
+- **Container-level resource usage** (CPU & memory)
+- Visibility into workload behavior under traffic
+
+This reflects real operational monitoring used in cloud-native 5G deployments.
+
+---
+
+## Automation & CI/CD (Current Status)
+
+- One-command deployment using Docker Compose
+- Repository structured to support CI/CD pipelines
+- CI/CD automation planned via GitHub Actions
+
+---
+
+## Roadmap: Kubernetes & AWS (Planned / Ongoing)
+
+### Phase 2 — Kubernetes Migration
+- Migrate containerized components to **Kubernetes (k3s / kind)**
+- Deploy network functions as Kubernetes Pods
+- Replace cgroup-based metrics with pod/container labels
+- Apply basic self-healing (restart policies)
+
+### Phase 3 — Cloud Deployment (AWS)
+- Deploy stack on **AWS EC2**
+- Use **ECR** for container images
+- Optional migration to **EKS**
+- Secure networking via VPC & Security Groups
+
+### Phase 4 — Extended 5G Integration (Optional)
+- Integrate Open5GS / Free5GC components
+- Simulate UE traffic using UERANSIM
+- Study user-plane behavior at the edge
+
+---
+
+## Tech Stack
+
+Docker, Linux (WSL2 Ubuntu), Prometheus, Grafana, cAdvisor, Node Exporter  
+(Kubernetes & AWS planned)
+
+---
+
+## Project Status
+
+🚧 **Ongoing** — foundation completed, orchestration and cloud phases in progress.

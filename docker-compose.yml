@@ -1,0 +1,96 @@
+services:
+  # "NF" Gateway (simulated network function / ingress)
+  nf-gateway:
+    image: nginx:1.27-alpine
+    container_name: nf-gateway
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - nf-app
+    networks:
+      - edge-net
+
+  # "NF App" (service behind the gateway)
+  nf-app:
+    image: hashicorp/http-echo:1.0
+    container_name: nf-app
+    command: ["-listen=:5678", "-text=mini-5g-edge-testbed: OK (nf-app behind nf-gateway)"]
+    networks:
+      - edge-net
+
+  # UE-like traffic generator (simple)
+  traffic-gen:
+    image: curlimages/curl:8.12.1
+    container_name: traffic-gen
+    depends_on:
+      - nf-gateway
+    networks:
+      - edge-net
+    command:
+      [
+        "sh", "-c",
+        "echo 'Traffic generator started. Hitting nf-gateway every 2s...' && \
+         while true; do \
+           ts=$$(date -Iseconds); \
+           code=$$(curl -s -o /dev/null -w '%{http_code}' http://nf-gateway/ || true); \
+           echo \"[$$ts] GET / -> $$code\"; \
+           sleep 2; \
+         done"
+      ]
+
+  # Metrics: host/node
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: node-exporter
+    networks:
+      - edge-net
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    volumes:
+      - /:/host:ro,rslave
+
+  # Metrics: containers
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    networks:
+      - edge-net
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: prometheus
+    networks:
+      - edge-net
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    image: grafana/grafana:11.1.4
+    container_name: grafana
+    networks:
+      - edge-net
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+networks:
+  edge-net:
+    name: edge-net
+
+volumes:
+  grafana-data:
