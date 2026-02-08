@@ -22,18 +22,10 @@ This mirrors how real 5G cores (e.g., Open5GS, Free5GC) are built and operated.
 
 ## High-Level Architecture (Phase 1)
 
-Traffic / UE-like load  
-→ **NF Gateway** (simulated network function)  
-→ **NF App** (service behind the gateway)
+📄 **Detailed architecture:**  
+See the full architecture description and diagram here:  
+➡️ [`docs/architecture.md`](docs/architecture.md)
 
-**Edge Node**
-- Linux (WSL2 Ubuntu) acting as an edge environment
-- Containerized components using Docker
-
-**Observability**
-- Prometheus for metrics collection
-- Grafana for real-time dashboards
-- Node Exporter + cAdvisor for host & container metrics
 
 ---
 
@@ -62,7 +54,13 @@ This reflects real operational monitoring used in cloud-native 5G deployments.
 
 - One-command deployment using Docker Compose
 - Repository structured to support CI/CD pipelines
-- CI/CD automation planned via GitHub Actions
+- Basic CI pipeline implemented using GitHub Actions  (compose validation & build)
+
+### CI Pipeline Status
+
+The project includes a basic **GitHub Actions CI pipeline** that validates the Docker Compose configuration and builds containers on each push.
+
+![CI Pipeline Success](docs/images/CI_workflow_githubActions.png)
 
 ---
 
@@ -93,7 +91,14 @@ Docker, Linux (WSL2 Ubuntu), Prometheus, Grafana, cAdvisor, Node Exporter
 (Kubernetes & AWS planned)
 
 ---
+## Repository Structure (Key Files)
 
+- `docker-compose.yml` — Edge testbed services
+- `docs/architecture.md` — Detailed architecture explanation
+- `images/architecture.png` — Architecture diagram
+- `.github/workflows/ci.yml` — CI pipeline (GitHub Actions)
+
+---
 ## Project Status
 
 🚧 **Ongoing** — foundation completed, orchestration and cloud phases in progress.
