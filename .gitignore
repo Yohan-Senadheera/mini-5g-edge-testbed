@@ -1,0 +1,11 @@
+# Docker runtime
+**/grafana-data/
+**/prometheus-data/
+**/data/
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+.vscode/
